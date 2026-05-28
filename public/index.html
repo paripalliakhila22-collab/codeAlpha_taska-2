@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker - Track Your Daily Activities</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>💪 FitTrack</h1>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="dashboard">📊 Dashboard</button>
+                <button class="nav-btn" data-tab="log-activity">➕ Log Activity</button>
+                <button class="nav-btn" data-tab="history">📋 History</button>
+                <button class="nav-btn" data-tab="settings">⚙️ Settings</button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="header">
+                    <h2>Today's Progress</h2>
+                    <input type="date" id="dateSelector" class="date-input">
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👟</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Steps</div>
+                            <div class="stat-value"><span id="totalSteps">0</span></div>
+                            <div class="stat-goal">Goal: 10,000</div>
+                        </div>
+                        <div class="stat-progress">
+                            <div class="progress-bar" style="width: 0%" id="stepsProgress"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Calories</div>
+                            <div class="stat-value"><span id="totalCalories">0</span></div>
+                            <div class="stat-goal">Burned</div>
+                        </div>
+                        <div class="stat-progress">
+                            <div class="progress-bar calories" style="width: 0%" id="caloriesProgress"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Duration</div>
+                            <div class="stat-value"><span id="totalDuration">0</span> min</div>
+                            <div class="stat-goal">Total workout time</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">💪</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Workouts</div>
+                            <div class="stat-value"><span id="workoutCount">0</span></div>
+                            <div class="stat-goal">Completed today</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <h3>Weekly Calories Burned</h3>
+                        <canvas id="caloriesChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Activity Distribution</h3>
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Today's Activities -->
+                <div class="activities-list-section">
+                    <h3>Today's Activities</h3>
+                    <div id="todayActivities" class="activities-list">
+                        <p class="no-data">No activities logged yet. Start by adding one!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Log Activity Tab -->
+            <section id="log-activity" class="tab-content">
+                <div class="header">
+                    <h2>Log New Activity</h2>
+                </div>
+
+                <form id="activityForm" class="activity-form">
+                    <div class="form-group">
+                        <label for="activityType">Activity Type *</label>
+                        <select id="activityType" required>
+                            <option value="">Select an activity</option>
+                            <option value="running">🏃 Running</option>
+                            <option value="walking">🚶 Walking</option>
+                            <option value="cycling">🚴 Cycling</option>
+                            <option value="gym">🏋️ Gym Workout</option>
+                            <option value="yoga">🧘 Yoga</option>
+                            <option value="swimming">🏊 Swimming</option>
+                            <option value="sports">⚽ Sports</option>
+                            <option value="steps">👟 Steps</option>
+                            <option value="other">📝 Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="activityDate">Date *</label>
+                        <input type="date" id="activityDate" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="duration">Duration (minutes) *</label>
+                            <input type="number" id="duration" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="calories">Calories Burned *</label>
+                            <input type="number" id="calories" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="steps">Steps (optional)</label>
+                            <input type="number" id="steps" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="distance">Distance (km, optional)</label>
+                            <input type="number" id="distance" min="0" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Notes (optional)</label>
+                        <textarea id="notes" rows="3" placeholder="How did you feel? Any additional details?"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Log Activity</button>
+                </form>
+            </section>
+
+            <!-- History Tab -->
+            <section id="history" class="tab-content">
+                <div class="header">
+                    <h2>Activity History</h2>
+                    <div class="filter-controls">
+                        <input type="date" id="filterStartDate" class="date-input">
+                        <span>to</span>
+                        <input type="date" id="filterEndDate" class="date-input">
+                        <button class="btn btn-secondary" id="filterBtn">Filter</button>
+                    </div>
+                </div>
+
+                <div id="historyList" class="history-list">
+                    <p class="no-data">No activities found.</p>
+                </div>
+            </section>
+
+            <!-- Settings Tab -->
+            <section id="settings" class="tab-content">
+                <div class="header">
+                    <h2>Settings</h2>
+                </div>
+
+                <div class="settings-container">
+                    <div class="settings-group">
+                        <h3>Daily Goals</h3>
+                        <div class="form-group">
+                            <label for="goalSteps">Daily Steps Goal</label>
+                            <input type="number" id="goalSteps" value="10000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="goalCalories">Daily Calories Goal</label>
+                            <input type="number" id="goalCalories" value="500" min="0">
+                        </div>
+                        <button class="btn btn-primary" id="saveGoalsBtn">Save Goals</button>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>User Information</h3>
+                        <div class="form-group">
+                            <label for="userName">Name</label>
+                            <input type="text" id="userName" placeholder="Your name">
+                        </div>
+                        <div class="form-group">
+                            <label for="userHeight">Height (cm)</label>
+                            <input type="number" id="userHeight" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="userWeight">Weight (kg)</label>
+                            <input type="number" id="userWeight" min="0" step="0.1">
+                        </div>
+                        <button class="btn btn-primary" id="saveUserInfoBtn">Save Info</button>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Data Management</h3>
+                        <button class="btn btn-danger" id="clearDataBtn">Clear All Data</button>
+                        <button class="btn btn-secondary" id="exportDataBtn">Export Data</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
